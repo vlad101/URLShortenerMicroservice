@@ -1,22 +1,31 @@
-<navbar></navbar>
+<!-- <navbar></navbar> -->
 
-<header class="hero-unit" id="banner">
+<header>
   <div class="container">
-    <h1>'Allo, 'Allo!</h1>
-    <p class="lead">Kick-start your next web app with Angular Fullstack</p>
-    <img src="assets/images/yeoman.png" alt="I'm Yeoman">
+    <br><p class="lead">API Basejump: URL Shortener</p>
   </div>
 </header>
 
 <div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <h1 class="page-header">Features:</h1>
-      <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in main.awesomeThings">
-        <li><a href="#" tooltip="{{thing.info}}">{{thing.name}}</a></li>
+    <blockquote>
+      Instructions:
+      <ul>
+        <li>User can pass a URL as a parameter and user will receive a shortened URL in the JSON response.</li>
+        <li>When user visits that shortened URL, it will redirect user to the original link.</li>
       </ul>
-    </div>
-  </div>
+    </blockquote>
+
+    <h3>Example usage:</h3>
+    <code>http://{{main.host}}<span ng-show="main.port">:{{main.port}}</span>/api/shortener/newUrl/https://www.google.com</code><br>
+    <code>http://{{main.host}}<span ng-show="main.port">:{{main.port}}</span>/api/shortener/newUrl/http://freecodecamp.com/news</code>
+
+    <h3>Example output:</h3>
+    <code>
+        { 
+          "original_url": "http://freecodecamp.com/news",
+          "short_url": "http://{{main.host}}<span ng-show="main.port">:{{main.port}}</span>/4"
+        } 
+    </code>
 </div>
 
 <footer></footer>

@@ -4,13 +4,17 @@
 
 class MainController {
 
-  constructor($http) {
+  constructor($http, $location) {
     this.$http = $http;
+    this.$location = $location;
     this.awesomeThings = [];
 
-    $http.get('/api/things').then(response => {
-      this.awesomeThings = response.data;
-    });
+    this.host = this.$location.host();
+    this.port = this.$location.port();
+    
+    // $http.get('/api/things').then(response => {
+    //   this.awesomeThings = response.data;
+    // });
   }
 
   addThing() {
