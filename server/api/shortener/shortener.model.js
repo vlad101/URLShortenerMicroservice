@@ -3,8 +3,8 @@
 var mongoose = require('bluebird').promisifyAll(require('mongoose'));
 
 var ShortenerSchema = new mongoose.Schema({
-  original_url: String,
-  short_url: String,
+  original_url: { type : String, required : true },
+  short_url: { type : String, required : true, unique: true },
   active: Boolean
 });
 

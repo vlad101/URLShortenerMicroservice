@@ -1,7 +1,7 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/shortener/urls/all     ->  createFromUrl
- * GET     /api/shortener/:newUrl      ->  index
+ * GET     /api/shortener/url/all     ->  createFromUrl
+ * GET     /api/shortener/newUrl/:newUrl      ->  index
  * POST    /api/shortener              ->  create
  * GET     /api/shortener/:id          ->  show
  * PUT     /api/shortener/:id          ->  update
@@ -76,6 +76,14 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
+// Gets a single Shortener from the DB
+export function showByShortUrl(req, res) {
+  Shortener.findAsync({short_url:req.params.shortUrl})
+    .then(handleEntityNotFound(res))
+    .then(responseWithResult(res))
+    .catch(handleError(res));
+}
+
 // Creates a new Shortener in the DB
 export function create(req, res) {
   Shortener.createAsync(req.body)
@@ -86,27 +94,23 @@ export function create(req, res) {
 // Gets an original url from API api/shortener/:newUrl and creates a new Shortener in the DB
 export function createFromUrl(req, res) {
 
-  var data = {};
-
-  if(!req.params || !isValidOriginalUrl(req.params[0])) {
-    data.error = 'Invalid URL';
-    data.original_url = '';
-    data.short_url = '';
-    return res.json(data);
-  } else {
-    data.error = '';
-    data.original_url = req.params[0];
-    data.short_url = null;
+  if(!req.params || req.params[0].trim().length == 0) {
+    var data = {
+      error : 'Invalid URL',
+      original_url : '',
+      short_url : ''
+    };
     return res.json(data);
   }
 
+  var url = req.params[0].trim();
   var newShortener = {
-    original_url:"www.google.com/123456789",
-    short_url: "AB123456789"
+    original_url: url,
+    short_url: getRandomShortUrl(url)
   }
   
   Shortener.createAsync(newShortener)
-    .then(responseWithResult(res, 201))
+    .then(responseWithCreateUrlResult(req, res, 201))
     .catch(handleError(res));
 }
 
@@ -130,6 +134,23 @@ export function destroy(req, res) {
     .catch(handleError(res));
 }
 
-function isValidOriginalUrl(url) {
-  return /^((http|https|ftp?):\/\/)?([w|W]{3}\.)?[a-zA-Z0-9\-\.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/.test(url);
+// The alphanumeric URL id will be generated for a short URL
+// ShortId creates amazingly short non-sequential url-friendly unique ids, perfect for url shorteners.
+function getRandomShortUrl(url) {
+  var shortid = require('shortid');
+  return shortid.generate();
+}
+
+// Response: {"original_url":"http://www.google.com","short_url":"http://localhost:9000/Ey3tOYwwl"}
+function responseWithCreateUrlResult(req, res, statusCode) {
+  statusCode = statusCode || 200;
+  return function(entity) {
+    if (entity) {
+      entity = entity.toObject();
+      delete entity.__v;
+      delete entity._id;
+      entity.short_url = 'http://' + req.headers.host + '/' + entity.short_url;
+      res.status(statusCode).json(entity);
+    }
+  };
 }

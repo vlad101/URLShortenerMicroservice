@@ -4,17 +4,22 @@
 
 class MainController {
 
-  constructor($http, $location) {
+  constructor($http, $location, $routeParams) {
     this.$http = $http;
     this.$location = $location;
+    this.$routeParams = $routeParams;
     this.awesomeThings = [];
 
     this.host = this.$location.host();
     this.port = this.$location.port();
-    
-    // $http.get('/api/things').then(response => {
-    //   this.awesomeThings = response.data;
-    // });
+    var urlParam = this.$routeParams.params;
+
+    $http.get('/api/shortener/getUrl/' + urlParam).then(response => {
+      this.redirectUrl = response.data;
+      if(this.redirectUrl.length > 0){
+        window.location.href = this.redirectUrl[0].original_url;
+      }
+    });
   }
 
   addThing() {
