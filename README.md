@@ -1,4 +1,17 @@
-# workspace
+# URL Shortener Microservice
+
+# Instructions:
+	- User can pass a URL as a parameter and user will receive a shortened URL in the JSON response.
+	- When user visits that shortened URL, it will redirect user to the original link.
+
+# Example usage:
+`http://localhost:9000/api/shortener/newUrl/https://www.google.com`
+`http://localhost:9000/api/shortener/newUrl/http://freecodecamp.com/news`
+
+# Example output:
+`{ "original_url": "http://freecodecamp.com/news", "short_url": "http://localhost:9000/4" }`
+
+# Project Details
 
 This project was generated with the [Angular Full-Stack Generator](https://github.com/DaftMonk/generator-angular-fullstack) version 3.2.0.
 
