@@ -94,7 +94,7 @@ export function create(req, res) {
 // Gets an original url from API api/shortener/:newUrl and creates a new Shortener in the DB
 export function createFromUrl(req, res) {
 
-  if(!req.params || req.params[0].trim().length == 0) {
+  if(!isValidOriginalUrl(req)) {
     var data = {
       error : 'Invalid URL',
       original_url : '',
@@ -153,4 +153,12 @@ function responseWithCreateUrlResult(req, res, statusCode) {
       res.status(statusCode).json(entity);
     }
   };
+}
+
+// Returns true if the URL is valid
+function isValidOriginalUrl(req) {
+  if(!req.params || req.params[0].trim().length == 0)
+    return false;
+  var urlregex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
+  return urlregex.test(req.params[0]);
 }
